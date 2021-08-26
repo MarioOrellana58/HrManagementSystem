@@ -1,8 +1,10 @@
 import './App.css';
 import {useState} from 'react'
+import Axios from 'axios'
 function App() {
 
-  const [formData, setFormData] = useState({
+  const API_ENDPOINT = 'http://localhost:3001'
+  const [employee, setEmployee] = useState({
     name: "",
     age: 0,
     country: "",
@@ -10,8 +12,18 @@ function App() {
     wage: 0
   });
 
-  const postData = () => {
-    console.log(formData)
+  const postEmployee = async () => {
+    try {
+      var response = await Axios.post(API_ENDPOINT + '/create', employee)
+      console.log(response)
+      if (response.status === 200) {
+        alert("Empleado creado, su ID es " + response.data.insertId)
+      } else {
+        alert("Hubo un error: " + response)
+      }
+    } catch (error) {
+      alert("Hubo un error: " + error)
+    }    
   }
 
   return (
@@ -20,7 +32,7 @@ function App() {
         <label>Name:</label>
         <input type = "text" 
           onChange={(e) => {
-            setFormData(prevState => ({
+            setEmployee(prevState => ({
                 ...prevState,
                 name: e.target.value
             }));
@@ -30,7 +42,7 @@ function App() {
         <label>Age:</label>
         <input type = "number"
           onChange={(e) => {
-            setFormData(prevState => ({
+            setEmployee(prevState => ({
                 ...prevState,
                 age: parseInt(e.target.value)
             }));
@@ -40,7 +52,7 @@ function App() {
         <label>Country:</label>
         <input type = "text"
           onChange={(e) => {
-            setFormData(prevState => ({
+            setEmployee(prevState => ({
                 ...prevState,
                 country: e.target.value
             }));
@@ -50,7 +62,7 @@ function App() {
         <label>Position:</label>
         <input type = "text"
           onChange={(e) => {
-            setFormData(prevState => ({
+            setEmployee(prevState => ({
                 ...prevState,
                 position: e.target.value
             }));
@@ -60,14 +72,16 @@ function App() {
         <label>Wage (year):</label>
         <input type = "number"
           onChange={(e) => {
-            setFormData(prevState => ({
+            setEmployee(prevState => ({
                 ...prevState,
                 wage: parseInt(e.target.value)
             }));
           }}
         />
 
-        <button onClick={postData}>Add Employee</button>
+        <button onClick={async () => {
+          await postEmployee()
+        }}>Add Employee</button>
       </div>
     </div>
   );
